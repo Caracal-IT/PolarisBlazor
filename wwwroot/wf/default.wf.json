@@ -1,0 +1,53 @@
+{
+  "name" : "default",
+  "activities": [
+    {
+      "name": "start",
+      "type": "blazor-page-activity",
+      "controls": [
+        {"tag" : "h1", "innerHTML": "Polaris Workflow" },
+        {"tag" : "div", "innerHTML": "Welcome to polaris workflow" },
+        {"tag" : "input", "id": "user.details.firstName", "value": "Kate", "style": "width:50%", "class": "form-control" },
+        {"tag" : "hr" },
+        {"tag":  "moon-button", "caption":  "Call C# Code", "next":  "alert"},
+        {"tag":  "moon-button", "caption":  "Counter", "next":  "counter-demo"},
+        {"tag":  "moon-button", "caption":  "Fetch Data", "next":  "fetch-data"},
+        {"tag":  "moon-button", "caption":  "Last Page", "next":  "stop"}
+      ]
+    },
+    {
+      "name": "fetch-data",
+      "type": "blazor-page-activity",
+      "controls": [
+        {"tag" : "h1", "innerHTML": "Fetch Data - Blazor" },
+        {"tag" : "div", "class": "alert alert-secondary", "innerHTML": "Get the weather forecast from the server" },
+        {"tag":  "PolarisBlazor.Pages.FetchData"},
+        {"tag":  "moon-button", "caption":  "Start", "next":  "start"}
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "custom-activity",
+      "next": "stop"
+    },
+    {
+      "name": "counter-demo",
+      "type": "blazor-page-activity",
+      "controls": [
+        {"tag" : "h1", "innerHTML": "Polaris Workflow - Blazor" },
+        {"tag" : "div", "class": "alert alert-secondary", "innerHTML": "This will demonstrate the Blazor counter" },
+        {"tag":  "PolarisBlazor.Pages.Counter", "id": "user.counter", "value":  "Mary"}
+      ]
+    },
+    {
+      "name": "stop",
+      "type": "blazor-page-activity",
+      "controls": [
+        {"tag" : "h1", "innerHTML": "End of the world" },
+        {"tag" : "input", "id": "user.details.firstName", "style": "width:50%", "class": "form-control" },
+        {"tag":  "hr" },
+        {"tag":  "moon-button", "caption":  "Start", "next":  "start"}
+      ]
+    }
+  ]
+}

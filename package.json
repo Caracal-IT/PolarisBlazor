@@ -1,0 +1,9 @@
+{
+  "name": "polaris-blazor",
+  "version": "0.0.0",
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {
+    "caracal_polaris": "^3.0.6"
+  }
+}

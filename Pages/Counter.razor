@@ -1,0 +1,42 @@
+﻿@page "/counter"
+@using PolarisBlazor.Workflow
+@inject IJSRuntime JS
+
+<h1>Counter</h1>
+@markup
+<hr/>
+<div>Id = @Id</div>
+<div>Value = @Value</div>
+<hr/>
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-warning" @onclick="GotoStart">Home</button>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    
+    [Parameter]
+    public string Value { get; set; }
+    
+    private int currentCount;
+    MarkupString markup;
+
+    protected override async Task OnInitializedAsync() {
+        var model = new ModelService(JS);
+        var user = await model.GetValue("user.details.firstName");
+        
+        markup = new($"<em>Hallo {user}</em>");
+    }
+
+    private void IncrementCount() {
+        currentCount++;
+    }
+
+    private async Task GotoStart() {
+        var wf = new Workflow(JS);
+        await wf.GotoAsync("start");
+    }
+
+}

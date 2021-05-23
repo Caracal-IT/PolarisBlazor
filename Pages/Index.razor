@@ -1,0 +1,120 @@
+﻿@page "/"
+@using System.Dynamic
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components.Rendering
+@using PolarisBlazor.Workflow
+@inject IJSRuntime JS
+<polaris-workflow url="data/settings.json" process="default"></polaris-workflow>
+<div id="wfContainer">
+    @_container
+</div>
+
+@code {
+    [JSInvokable]
+    public static Task<string> GreetFromCs() => 
+        Task.FromResult("Hallo From The Matrix");
+
+    RenderFragment _container;
+    private static Func<string, Task> _action;
+    
+    protected override void OnInitialized()
+    {
+        _action = BuildClientPage;
+        JS.InvokeVoidAsync("onWfLoaded");
+    }
+
+    private async Task BuildClientPage(string controls) {
+        var ctrls = JsonSerializer.Deserialize<List<ExpandoObject>>(controls);
+        _container = null;
+        StateHasChanged();
+        await Bind(ctrls);
+        _container = BuildPage(ctrls);
+        StateHasChanged();
+    }
+
+    async Task Click(string value, ExpandoObject obj) {
+        var model = new ModelService(JS);
+        var id = obj.First(k => k.Key == "id").Value!.ToString();
+
+        await model.SetValue(id, value);
+    }
+
+    async Task<string> GetValue(ExpandoObject obj) {
+        var model = new ModelService(JS);
+        var id = obj.FirstOrDefault(a => a.Key == "id").Value??string.Empty;
+        var defaultValue = obj.FirstOrDefault(k => k.Key == "value").Value?.ToString() ?? string.Empty;
+        
+        var value = await model.GetValue(id.ToString());
+        
+        if (string.IsNullOrWhiteSpace(value) && !string.IsNullOrWhiteSpace(defaultValue)) 
+            await model.SetValue(id.ToString(), defaultValue);
+
+        return value??defaultValue;
+    }
+
+    async Task Bind(IEnumerable<ExpandoObject> controls) {
+        foreach (var t in controls) {
+            dynamic test = t;
+
+            if(t.All(a => a.Key != "innerText" && a.Key != "innerHTML")) 
+                test.value = await GetValue(t);
+        }
+    }
+    
+     RenderFragment BuildPage(IReadOnlyList<ExpandoObject> controls) => builder => {
+         for (var i = 0; i < controls.Count; i++) {
+             var item = controls[i];
+             if (BuildComponent(item, builder, i)) continue;
+             
+             BuildElement(item, builder, i);
+         }
+    };
+
+    private static bool BuildComponent(ExpandoObject item, RenderTreeBuilder builder, int i) {
+        var control = item.First().Value?.ToString();
+        
+        if (control?.Contains(".") != true) return false;
+
+        var type = Type.GetType(control);
+        if (type == null) return true;
+        
+        builder.OpenComponent(i, type);
+        
+        foreach (var (key, value) in item.Where(a => a.Key != "tag")) 
+            builder.AddAttribute(i, key, value.ToString());
+        
+        builder.CloseComponent();
+        
+        return true;
+    }
+
+    private void BuildElement(ExpandoObject item, RenderTreeBuilder builder, int i) {
+        foreach (var (key, value) in item) 
+            BuildElement(item, builder, i, key, value);
+        
+        builder.CloseElement();
+    }
+
+    private void BuildElement(ExpandoObject item, RenderTreeBuilder builder, int i, string key, object value) {
+        switch (key) {
+            case "tag":
+                builder.OpenElement(i, value.ToString() ?? "div");
+                builder.AddAttribute(
+                    i,
+                    "oninput",
+                    EventCallback.Factory.CreateBinder(this, async e => await Click(e, item), string.Empty));
+                break;
+            case "innerText":
+            case "innerHTML":
+                builder.AddContent(i, value);
+                break;
+            default:
+                builder.AddAttribute(i, key, value);
+                break;
+        }
+    }
+
+    [JSInvokable]
+    public static async Task BuildPage(string controls) => 
+        await _action.Invoke(controls);
+}
