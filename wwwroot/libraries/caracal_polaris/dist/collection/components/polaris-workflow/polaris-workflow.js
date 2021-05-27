@@ -39,8 +39,8 @@ export class PolarisWorkflow {
     }
     await this.wf.setProcess(process, next);
   }
-  async addActivity(activity) {
-    ActivityFactory.add(activity);
+  async addActivity(activity, replace = false) {
+    ActivityFactory.add(activity, replace);
   }
   async addValidator(validator) {
     this.validator.addValidator(validator);
@@ -313,8 +313,11 @@ export class PolarisWorkflow {
     },
     "addActivity": {
       "complexType": {
-        "signature": "(activity: Activity) => Promise<void>",
+        "signature": "(activity: Activity, replace?: boolean) => Promise<void>",
         "parameters": [{
+            "tags": [],
+            "text": ""
+          }, {
             "tags": [],
             "text": ""
           }],

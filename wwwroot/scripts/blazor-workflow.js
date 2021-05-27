@@ -7,7 +7,7 @@ window.addEventListener('message', msg => {
     
     const wf = document.querySelector("polaris-workflow");
     wf.addActivity(new CustomActivity());
-    wf.addActivity(new BlazorPageActivity());
+    wf.addActivity(new BlazorPageActivity(), true);
     
     window.goto = (next) => wf.ctx.wf.goto(next);
     

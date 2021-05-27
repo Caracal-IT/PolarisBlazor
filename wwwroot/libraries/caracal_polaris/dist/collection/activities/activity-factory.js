@@ -17,10 +17,13 @@ export class ActivityFactory {
       return new NullActivity();
     return Object.assign(act, config, { ctx });
   }
-  static add(activity) {
-    let act = ActivityFactory.activities.find(a => a.type === activity.type);
-    if (!act)
-      ActivityFactory.activities.push(activity);
+  static add(activity, replace = false) {
+    let index = ActivityFactory.activities.findIndex(a => a.type === activity.type);
+    if (index > -1 && !replace)
+      return;
+    if (index > -1)
+      ActivityFactory.activities.splice(index, 1);
+    ActivityFactory.activities.push(activity);
   }
 }
 ActivityFactory.activities = [

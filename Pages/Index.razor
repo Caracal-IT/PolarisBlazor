@@ -79,10 +79,13 @@
         if (type == null) return true;
         
         builder.OpenComponent(i, type);
-        
-        foreach (var (key, value) in item.Where(a => a.Key != "tag")) 
-            builder.AddAttribute(i, key, value.ToString());
-        
+        var props = type.GetProperties().Select(p => p.Name).ToList();
+
+        foreach (var (key, value) in item.Where(a => a.Key != "tag")) {
+            if(props.Contains(key.ToLower(), StringComparer.OrdinalIgnoreCase))
+                builder.AddAttribute(i, key, value.ToString());
+        }
+
         builder.CloseComponent();
         
         return true;

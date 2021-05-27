@@ -4,6 +4,6 @@
   "scripts": {},
   "devDependencies": {},
   "dependencies": {
-    "caracal_polaris": "^3.0.6"
+    "caracal_polaris": "^3.1.1"
   }
 }

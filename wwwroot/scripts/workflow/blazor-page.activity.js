@@ -6,8 +6,8 @@ export class BlazorPageActivity {
     set controls(value) { return this._controls = value; }
 
     constructor() {
-        this.name = 'blazor-page-activity';
-        this.type = 'blazor-page-activity';
+        this.name = 'page-activity';
+        this.type = 'page-activity';
     }
 
     async execute() {

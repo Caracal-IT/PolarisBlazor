@@ -34,7 +34,7 @@ export declare class PolarisWorkflow implements Control {
   set controls(val: any);
   setServices(ctx: Context): Promise<void>;
   load(process: any, next?: string, sessionId?: string): Promise<void>;
-  addActivity(activity: Activity): Promise<void>;
+  addActivity(activity: Activity, replace?: boolean): Promise<void>;
   addValidator(validator: Validator): Promise<void>;
   sendMessage(message: Message): void;
   componentWillLoad(): Promise<void>;

@@ -3,7 +3,7 @@
   "activities": [
     {
       "name": "start",
-      "type": "blazor-page-activity",
+      "type": "page-activity",
       "controls": [
         {"tag" : "h1", "innerHTML": "Polaris Workflow" },
         {"tag" : "div", "innerHTML": "Welcome to polaris workflow" },
@@ -17,7 +17,7 @@
     },
     {
       "name": "fetch-data",
-      "type": "blazor-page-activity",
+      "type": "page-activity",
       "controls": [
         {"tag" : "h1", "innerHTML": "Fetch Data - Blazor" },
         {"tag" : "div", "class": "alert alert-secondary", "innerHTML": "Get the weather forecast from the server" },
@@ -32,7 +32,7 @@
     },
     {
       "name": "counter-demo",
-      "type": "blazor-page-activity",
+      "type": "page-activity",
       "controls": [
         {"tag" : "h1", "innerHTML": "Polaris Workflow - Blazor" },
         {"tag" : "div", "class": "alert alert-secondary", "innerHTML": "This will demonstrate the Blazor counter" },
@@ -41,7 +41,7 @@
     },
     {
       "name": "stop",
-      "type": "blazor-page-activity",
+      "type": "page-activity",
       "controls": [
         {"tag" : "h1", "innerHTML": "End of the world" },
         {"tag" : "input", "id": "user.details.firstName", "style": "width:50%", "class": "form-control" },
