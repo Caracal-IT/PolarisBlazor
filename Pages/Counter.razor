@@ -1,42 +1,64 @@
 ﻿@page "/counter"
 @using PolarisBlazor.Workflow
-@inject IJSRuntime JS
+@inject IJSRuntime Js
 
 <h1>Counter</h1>
-@markup
+@_markup.ToString()
 <hr/>
 <div>Id = @Id</div>
 <div>Value = @Value</div>
 <hr/>
-<p>Current count: @currentCount</p>
-
+<p>Current count: @_currentCount.ToString()</p>
+<input @bind="@FirstName" />
+<hr/>
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 <button class="btn btn-warning" @onclick="GotoStart">Home</button>
 
 @code {
+    private int _currentCount;
+    MarkupString _markup;
+    private string _firstName;
+    private ModelService _model;
+    
     [Parameter]
     public string Id { get; set; }
     
     [Parameter]
     public string Value { get; set; }
+
+    private string FirstName {
+        get => _firstName;
+        set {
+            _firstName = value;
+            InvokeAsync(FirstNameValueChanged);
+        }
+    }
     
-    private int currentCount;
-    MarkupString markup;
+    private ModelService Model {
+        get {
+            if (_model != null)
+                return _model;
 
+            _model = new ModelService(Js);
+
+            return _model;
+        }
+    }
+    
     protected override async Task OnInitializedAsync() {
-        var model = new ModelService(JS);
-        var user = await model.GetValue("user.details.firstName");
+        var user = await Model.GetValue("user.details.firstName");
+        FirstName = user;
         
-        markup = new($"<em>Hallo {user}</em>");
+        _markup = new MarkupString($"<em>Hallo {user}</em>");
     }
 
-    private void IncrementCount() {
-        currentCount++;
-    }
+    private void IncrementCount() => _currentCount++;
+
+    private async Task FirstNameValueChanged() =>
+        await Model.SetValue("user.details.firstName", _firstName);
 
     private async Task GotoStart() {
-        var wf = new Workflow(JS);
+        var wf = new Workflow(Js);
         await wf.GotoAsync("start");
     }
-
 }
