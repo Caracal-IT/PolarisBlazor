@@ -18,17 +18,19 @@
 @code {
     private int _currentCount;
     MarkupString _markup;
-    private string _firstName;
-    private string _value;
+    private string _firstName = null!;
+    private string _value = null!;
 
     [Parameter]
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
 
+#pragma warning disable BL0007
     [Parameter]
     public string Value {
         get => _value;
         set => InvokeAsync(() => ValueChanged(Id, _value = value));
     }
+#pragma warning restore BL0007
 
     private string FirstName {
         get => _firstName;

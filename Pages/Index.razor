@@ -3,7 +3,7 @@
 @using System.Text.Json
 @using Microsoft.AspNetCore.Components.Rendering
 @using PolarisBlazor.Workflow
-@inject IJSRuntime JS
+@inject IJSRuntime Js
 <polaris-workflow url="data/settings.json" process="default"></polaris-workflow>
 <div id="wfContainer">
     @_container
@@ -14,38 +14,38 @@
     public static Task<string> GreetFromCs() => 
         Task.FromResult("Hallo From The Matrix");
 
-    RenderFragment _container;
-    private static Func<string, Task> _action;
+    RenderFragment? _container;
+    private static Func<string, Task>? _action;
     
     protected override void OnInitialized()
     {
         _action = BuildClientPage;
-        JS.InvokeVoidAsync("onWfLoaded");
+        Js.InvokeVoidAsync("onWfLoaded");
     }
 
     private async Task BuildClientPage(string controls) {
         var ctrls = JsonSerializer.Deserialize<List<ExpandoObject>>(controls);
         _container = null;
         StateHasChanged();
-        await Bind(ctrls);
-        _container = BuildPage(ctrls);
+        await Bind(ctrls!);
+        _container = BuildPage(ctrls!);
         StateHasChanged();
     }
 
     async Task Click(string value, ExpandoObject obj) {
         var id = obj.First(k => k.Key == "id").Value!.ToString();
 
-        await JS.Model().SetValue(id, value);
+        await Js.Model().SetValue(id!, value);
     }
 
     async Task<string> GetValue(ExpandoObject obj) {
         var id = obj.FirstOrDefault(a => a.Key == "id").Value??string.Empty;
         var defaultValue = obj.FirstOrDefault(k => k.Key == "value").Value?.ToString() ?? string.Empty;
         
-        var value = await JS.Model().GetValue(id.ToString());
+        var value = await Js.Model().GetValue(id.ToString()!);
         
         if (string.IsNullOrWhiteSpace(value) && !string.IsNullOrWhiteSpace(defaultValue)) 
-            await JS.Model().SetValue(id.ToString(), defaultValue);
+            await Js.Model().SetValue(id.ToString()!, defaultValue);
 
         return value??defaultValue;
     }
@@ -81,7 +81,7 @@
 
         foreach (var (key, value) in item.Where(a => a.Key != "tag")) {
             if(props.Contains(key.ToLower(), StringComparer.OrdinalIgnoreCase))
-                builder.AddAttribute(i, key, value.ToString());
+                builder.AddAttribute(i, key, value!.ToString());
         }
 
         builder.CloseComponent();
@@ -91,7 +91,7 @@
 
     private void BuildElement(ExpandoObject item, RenderTreeBuilder builder, int i) {
         foreach (var (key, value) in item) 
-            BuildElement(item, builder, i, key, value);
+            BuildElement(item, builder, i, key, value!);
         
         builder.CloseElement();
     }
@@ -103,7 +103,7 @@
                 builder.AddAttribute(
                     i,
                     "oninput",
-                    EventCallback.Factory.CreateBinder(this, async e => await Click(e, item), string.Empty));
+                    EventCallback.Factory.CreateBinder(this, async e => await Click(e!, item), string.Empty));
                 break;
             case "innerText":
             case "innerHTML":
@@ -117,5 +117,5 @@
 
     [JSInvokable]
     public static async Task BuildPage(string controls) => 
-        await _action.Invoke(controls);
+        await _action?.Invoke(controls)!;
 }
