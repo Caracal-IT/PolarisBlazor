@@ -7,7 +7,7 @@
       "controls": [
         {"tag" : "h1", "innerHTML": "Polaris Workflow" },
         {"tag" : "div", "innerHTML": "Welcome to polaris workflow" },
-        {"tag" : "input", "id": "user.details.firstName", "value": "Kate", "style": "width:50%", "class": "form-control" },
+        {"tag" : "input", "id": "user.details.firstName", "value": "Ettiene", "style": "width:50%", "class": "form-control" },
         {"tag" : "hr" },
         {"tag":  "moon-button", "caption":  "Call C# Code", "next":  "alert"},
         {"tag":  "moon-button", "caption":  "Counter", "next":  "counter-demo"},
