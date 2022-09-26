@@ -33,21 +33,19 @@
     }
 
     async Task Click(string value, ExpandoObject obj) {
-        var model = new ModelService(JS);
         var id = obj.First(k => k.Key == "id").Value!.ToString();
 
-        await model.SetValue(id, value);
+        await JS.Model().SetValue(id, value);
     }
 
     async Task<string> GetValue(ExpandoObject obj) {
-        var model = new ModelService(JS);
         var id = obj.FirstOrDefault(a => a.Key == "id").Value??string.Empty;
         var defaultValue = obj.FirstOrDefault(k => k.Key == "value").Value?.ToString() ?? string.Empty;
         
-        var value = await model.GetValue(id.ToString());
+        var value = await JS.Model().GetValue(id.ToString());
         
         if (string.IsNullOrWhiteSpace(value) && !string.IsNullOrWhiteSpace(defaultValue)) 
-            await model.SetValue(id.ToString(), defaultValue);
+            await JS.Model().SetValue(id.ToString(), defaultValue);
 
         return value??defaultValue;
     }

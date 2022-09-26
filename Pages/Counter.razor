@@ -18,8 +18,7 @@
     private int _currentCount;
     MarkupString _markup;
     private string _firstName;
-    private ModelService _model;
-    
+
     [Parameter]
     public string Id { get; set; }
     
@@ -33,20 +32,9 @@
             InvokeAsync(FirstNameValueChanged);
         }
     }
-    
-    private ModelService Model {
-        get {
-            if (_model != null)
-                return _model;
 
-            _model = new ModelService(Js);
-
-            return _model;
-        }
-    }
-    
     protected override async Task OnInitializedAsync() {
-        var user = await Model.GetValue("user.details.firstName");
+        var user = await Js.Model().GetValue("user.details.firstName");
         FirstName = user;
         
         _markup = new MarkupString($"<em>Hallo {user}</em>");
@@ -55,10 +43,8 @@
     private void IncrementCount() => _currentCount++;
 
     private async Task FirstNameValueChanged() =>
-        await Model.SetValue("user.details.firstName", _firstName);
+        await Js.Model().SetValue("user.details.firstName", _firstName);
 
-    private async Task GotoStart() {
-        var wf = new Workflow(Js);
-        await wf.GotoAsync("start");
-    }
+    private async Task GotoStart() =>
+        await Js.Workflow().GotoAsync("start");
 }
