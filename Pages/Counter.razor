@@ -10,6 +10,7 @@
 <hr/>
 <p>Current count: @_currentCount.ToString()</p>
 <input @bind="@FirstName" />
+<input @bind="@Value" />
 <hr/>
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 <button class="btn btn-warning" @onclick="GotoStart">Home</button>
@@ -18,19 +19,20 @@
     private int _currentCount;
     MarkupString _markup;
     private string _firstName;
+    private string _value;
 
     [Parameter]
     public string Id { get; set; }
-    
+
     [Parameter]
-    public string Value { get; set; }
+    public string Value {
+        get => _value;
+        set => InvokeAsync(() => ValueChanged(Id, _value = value));
+    }
 
     private string FirstName {
         get => _firstName;
-        set {
-            _firstName = value;
-            InvokeAsync(FirstNameValueChanged);
-        }
+        set => InvokeAsync(() => ValueChanged("user.details.firstName", _firstName = value));
     }
 
     protected override async Task OnInitializedAsync() {
@@ -42,8 +44,8 @@
 
     private void IncrementCount() => _currentCount++;
 
-    private async Task FirstNameValueChanged() =>
-        await Js.Model().SetValue("user.details.firstName", _firstName);
+    private async Task ValueChanged(string id, string value) =>
+        await Js.Model().SetValue(id, value);
 
     private async Task GotoStart() =>
         await Js.Workflow().GotoAsync("start");
